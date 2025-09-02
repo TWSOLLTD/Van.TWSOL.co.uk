@@ -696,6 +696,9 @@
                 <button class="btn" onclick="importDefaultInventory()">
                     <i class="fas fa-download"></i> Import Default Inventory
                 </button>
+                <button class="btn" onclick="forceReloadDefault()">
+                    <i class="fas fa-sync"></i> Force Reload Default
+                </button>
                 <button class="btn btn-danger" onclick="clearAllData()">
                     <i class="fas fa-trash"></i> Clear All Data
                 </button>
@@ -847,6 +850,12 @@
                 if (savedInventory) {
                     inventory = JSON.parse(savedInventory);
                     console.log('Loaded from localStorage:', inventory.length, 'items');
+                    
+                    // If localStorage has 0 items, it might be corrupted - load default
+                    if (inventory.length === 0) {
+                        console.log('localStorage has 0 items, loading default inventory...');
+                        await loadDefaultInventory();
+                    }
                 } else {
                     // If no saved inventory, load from default JSON file
                     console.log('No saved inventory, loading default...');
@@ -1413,6 +1422,15 @@
                 loadInventory();
                 showSaveStatus('All inventory data cleared!', 'warning');
             }
+        }
+
+        // Force reload default inventory (for debugging)
+        async function forceReloadDefault() {
+            console.log('Force reloading default inventory...');
+            localStorage.removeItem('inventory'); // Clear any corrupted data
+            await loadDefaultInventory();
+            loadInventory();
+            showSaveStatus('Force reloaded default inventory!', 'success');
         }
 
         // Keyboard shortcuts
