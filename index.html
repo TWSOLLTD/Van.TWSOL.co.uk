@@ -1303,6 +1303,14 @@
                 document.getElementById('adminSection').classList.add('show');
                 document.getElementById('adminButton').style.display = 'none';
                 document.getElementById('exitAdminButton').style.display = 'flex';
+                
+                // Hide other sections
+                document.querySelector('.search-section').style.display = 'none';
+                document.querySelector('.stats-section').style.display = 'none';
+                document.querySelector('.inventory-section').style.display = 'none';
+                document.querySelector('.replace-section').style.display = 'none';
+                document.querySelector('.email-section').style.display = 'none';
+                
                 hideLoginModal();
             } else {
                 alert("Incorrect password.");
@@ -1314,6 +1322,13 @@
             document.getElementById('adminSection').classList.remove('show');
             document.getElementById('adminButton').style.display = 'flex';
             document.getElementById('exitAdminButton').style.display = 'none';
+            
+            // Show other sections
+            document.querySelector('.search-section').style.display = 'block';
+            document.querySelector('.stats-section').style.display = 'block';
+            document.querySelector('.inventory-section').style.display = 'block';
+            document.querySelector('.replace-section').style.display = 'block';
+            document.querySelector('.email-section').style.display = 'block';
         }
 
         // Save status function
