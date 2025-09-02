@@ -763,8 +763,8 @@
         let lastSyncTime = 0;
 
         // Load inventory on page load
-        window.onload = function() {
-            loadInventoryFromLocalStorage();
+        window.onload = async function() {
+            await loadInventoryFromLocalStorage();
             setupAutoSync();
             updateSyncStatus('Online', 'online');
         };
@@ -796,7 +796,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.inventory) {
+                    if (data.inventory && data.inventory.length > 0) {
                         inventory = data.inventory;
                         localStorage.setItem('inventory', JSON.stringify(inventory));
                         loadInventory();
@@ -969,7 +969,7 @@
                 updateDropdowns();
             } catch (error) {
                 console.error('Error loading inventory:', error);
-                inventory = [];
+                // Don't reset inventory to empty array - just log the error
             } finally {
                 loadingIndicator.style.display = 'none';
             }
