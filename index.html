@@ -691,6 +691,14 @@
                 <button class="btn btn-danger" onclick="removeItem()">
                     <i class="fas fa-trash"></i> Remove Item
                 </button>
+
+                <h3 style="margin-top: 30px;"><i class="fas fa-download"></i> Import/Reset Data</h3>
+                <button class="btn" onclick="importDefaultInventory()">
+                    <i class="fas fa-download"></i> Import Default Inventory
+                </button>
+                <button class="btn btn-danger" onclick="clearAllData()">
+                    <i class="fas fa-trash"></i> Clear All Data
+                </button>
             </div>
         </div>
 
@@ -831,19 +839,37 @@
             }
         }
 
-        function loadInventoryFromLocalStorage() {
+        async function loadInventoryFromLocalStorage() {
             try {
                 const savedInventory = localStorage.getItem('inventory');
                 if (savedInventory) {
                     inventory = JSON.parse(savedInventory);
                 } else {
-                    inventory = [];
+                    // If no saved inventory, load from default JSON file
+                    await loadDefaultInventory();
                 }
                 loadInventory();
             } catch (error) {
                 console.error('Error loading from localStorage:', error);
-                inventory = [];
+                await loadDefaultInventory();
                 loadInventory();
+            }
+        }
+
+        async function loadDefaultInventory() {
+            try {
+                const response = await fetch('inventory.json');
+                if (response.ok) {
+                    inventory = await response.json();
+                    localStorage.setItem('inventory', JSON.stringify(inventory));
+                    console.log('Loaded default inventory:', inventory.length, 'items');
+                } else {
+                    console.warn('Could not load default inventory, starting with empty array');
+                    inventory = [];
+                }
+            } catch (error) {
+                console.error('Error loading default inventory:', error);
+                inventory = [];
             }
         }
 
@@ -1232,6 +1258,37 @@
 
             const mailtoLink = `mailto:helpdesk@t7s.co.uk?subject=Restock%20van&body=${encodeURIComponent(emailBody)}`;
             window.location.href = mailtoLink;
+        }
+
+        // Import/Reset Data functions
+        async function importDefaultInventory() {
+            const confirmImport = confirm("Are you sure you want to import the default inventory? This will overwrite your current data.");
+            if (confirmImport) {
+                try {
+                    const response = await fetch('inventory.json');
+                    if (response.ok) {
+                        inventory = await response.json();
+                        localStorage.setItem('inventory', JSON.stringify(inventory));
+                        loadInventory();
+                        showSaveStatus(`Default inventory imported! ${inventory.length} items loaded.`, 'success');
+                    } else {
+                        showSaveStatus('Could not load default inventory file.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error importing default inventory:', error);
+                    showSaveStatus('Error importing default inventory.', 'error');
+                }
+            }
+        }
+
+        async function clearAllData() {
+            const confirmClear = confirm("Are you sure you want to clear ALL inventory data? This action cannot be undone.");
+            if (confirmClear) {
+                inventory = [];
+                localStorage.removeItem('inventory');
+                loadInventory();
+                showSaveStatus('All inventory data cleared!', 'warning');
+            }
         }
 
         // Keyboard shortcuts
