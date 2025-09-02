@@ -842,15 +842,20 @@
         async function loadInventoryFromLocalStorage() {
             try {
                 const savedInventory = localStorage.getItem('inventory');
+                console.log('Saved inventory from localStorage:', savedInventory ? 'Found' : 'Not found');
+                
                 if (savedInventory) {
                     inventory = JSON.parse(savedInventory);
+                    console.log('Loaded from localStorage:', inventory.length, 'items');
                 } else {
                     // If no saved inventory, load from default JSON file
+                    console.log('No saved inventory, loading default...');
                     await loadDefaultInventory();
                 }
                 loadInventory();
             } catch (error) {
                 console.error('Error loading from localStorage:', error);
+                console.log('Falling back to default inventory...');
                 await loadDefaultInventory();
                 loadInventory();
             }
@@ -858,11 +863,14 @@
 
         async function loadDefaultInventory() {
             try {
+                console.log('Loading default inventory...');
                 // Try to fetch from file first
                 let response = await fetch('inventory.json');
                 if (response.ok) {
                     inventory = await response.json();
+                    console.log('Loaded from inventory.json file:', inventory.length, 'items');
                 } else {
+                    console.log('Could not fetch inventory.json, using hardcoded data...');
                     // Fallback to hardcoded data if fetch fails
                     inventory = [
                         {"name":"Kettle Lead","minStock":6,"currentStock":5},
@@ -923,7 +931,7 @@
                 }
                 
                 localStorage.setItem('inventory', JSON.stringify(inventory));
-                console.log('Loaded default inventory:', inventory.length, 'items');
+                console.log('Saved to localStorage and loaded default inventory:', inventory.length, 'items');
             } catch (error) {
                 console.error('Error loading default inventory:', error);
                 inventory = [];
@@ -938,6 +946,7 @@
 
         // Inventory management functions
         function loadInventory() {
+            console.log('loadInventory called with', inventory.length, 'items');
             const loadingIndicator = document.getElementById('loadingIndicator');
             const inventoryGrid = document.getElementById('inventoryGrid');
             
