@@ -1118,10 +1118,8 @@
             const item = inventory.find(i => i.name === itemName);
             
             if (item && item.currentStock > 0) {
-                if (confirm(`Are you sure you want to take ALL ${item.currentStock} items of "${itemName}"?`)) {
-                    item.currentStock = 0;
-                    saveInventory();
-                }
+                item.currentStock = 0;
+                saveInventory();
             } else {
                 alert("No items in stock!");
             }
