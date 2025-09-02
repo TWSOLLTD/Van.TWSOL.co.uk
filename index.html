@@ -319,6 +319,12 @@
 
         .card-actions {
             display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-row {
+            display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
@@ -1023,19 +1029,23 @@
                     </div>
                 </div>
                 <div class="card-actions">
-                    <button class="action-btn take" onclick="takeItem('${item.name}')">
-                        <i class="fas fa-minus"></i> Take 1
-                    </button>
-                    <button class="action-btn take-x" onclick="takeXItems('${item.name}')">
-                        <i class="fas fa-minus"></i> Take X
-                    </button>
+                    <div class="action-row">
+                        <button class="action-btn take" onclick="takeItem('${item.name}')">
+                            <i class="fas fa-minus"></i> Take 1
+                        </button>
+                        <button class="action-btn take-x" onclick="takeAllItems('${item.name}')">
+                            <i class="fas fa-minus"></i> Take All
+                        </button>
+                    </div>
                     ${item.currentStock < item.minStock ? `
-                        <button class="action-btn replace" onclick="replaceOne('${item.name}')">
-                            <i class="fas fa-plus"></i> Replace 1
-                        </button>
-                        <button class="action-btn replace" onclick="replaceAll('${item.name}')">
-                            <i class="fas fa-plus"></i> Replace All
-                        </button>
+                        <div class="action-row">
+                            <button class="action-btn replace" onclick="replaceOne('${item.name}')">
+                                <i class="fas fa-plus"></i> Replace 1
+                            </button>
+                            <button class="action-btn replace" onclick="replaceAll('${item.name}')">
+                                <i class="fas fa-plus"></i> Replace All
+                            </button>
+                        </div>
                     ` : ''}
                 </div>
             `;
@@ -1104,23 +1114,16 @@
             }
         }
 
-        function takeXItems(itemName) {
-            const x = prompt("How many items would you like to take?");
-            if (x === null) return;
-            
-            const quantity = parseInt(x);
-            if (isNaN(quantity) || quantity <= 0) {
-                alert("Please enter a valid number.");
-                return;
-            }
-
+        function takeAllItems(itemName) {
             const item = inventory.find(i => i.name === itemName);
             
-            if (item && item.currentStock >= quantity) {
-                item.currentStock -= quantity;
-                saveInventory();
+            if (item && item.currentStock > 0) {
+                if (confirm(`Are you sure you want to take ALL ${item.currentStock} items of "${itemName}"?`)) {
+                    item.currentStock = 0;
+                    saveInventory();
+                }
             } else {
-                alert("Not enough items in stock!");
+                alert("No items in stock!");
             }
         }
 
