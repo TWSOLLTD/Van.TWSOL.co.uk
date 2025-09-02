@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Van Inventory Management - TWSOL</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚐</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -573,36 +573,392 @@
             color: #212529;
         }
 
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+
+        .modal .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .modal input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal .btn {
+            flex: 1;
+            margin: 0 5px;
+            min-height: 44px;
+        }
+
+        .modal .btn:first-child {
+            margin-left: 0;
+        }
+
+        .modal .btn:last-child {
+            margin-right: 0;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
+                max-width: 100%;
             }
             
             .header {
                 flex-direction: column;
                 text-align: center;
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+                line-height: 1.2;
+            }
+            
+            .logo-section img {
+                height: 40px;
+            }
+            
+            .search-section {
+                padding: 20px;
             }
             
             .search-container {
                 flex-direction: column;
+                gap: 15px;
             }
             
             .search-input {
                 min-width: 100%;
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 15px 20px;
+            }
+            
+            .filter-buttons {
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .filter-btn {
+                padding: 12px 16px;
+                font-size: 14px;
+                min-width: 80px;
+                flex: 1;
+                max-width: 120px;
+            }
+            
+            .stats-section {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 12px;
+            }
+            
+            .inventory-section {
+                padding: 20px;
             }
             
             .inventory-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .inventory-card {
+                padding: 15px;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .item-name {
+                font-size: 1rem;
+                line-height: 1.3;
+            }
+            
+            .stock-info {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .stock-item {
+                padding: 8px;
+            }
+            
+            .stock-value {
+                font-size: 1rem;
             }
             
             .card-actions {
                 flex-direction: column;
+                gap: 8px;
+            }
+            
+            .action-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .action-btn {
+                padding: 12px 16px;
+                font-size: 14px;
+                min-height: 44px; /* Better touch target */
+                justify-content: center;
+            }
+            
+            .admin-section {
+                padding: 20px;
+            }
+            
+            .admin-menu {
+                padding: 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-group input,
+            .form-group select {
+                padding: 12px 15px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                margin-bottom: 10px;
+                min-height: 44px;
+                width: 100%;
+            }
+            
+            .replace-section {
+                padding: 20px;
             }
             
             .replace-item {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
                 text-align: center;
+                padding: 15px;
+            }
+            
+            .replace-item-info {
+                text-align: center;
+            }
+            
+            .replace-actions {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .replace-actions .btn {
+                width: 100%;
+            }
+            
+            .email-section {
+                padding: 20px;
+            }
+            
+            .email-btn {
+                padding: 15px 25px;
+                font-size: 16px;
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .save-status {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                transform: translateY(-100%);
+                text-align: center;
+            }
+            
+            .save-status.show {
+                transform: translateY(0);
+            }
+            
+            .sync-status {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                text-align: center;
+                font-size: 11px;
+            }
+            
+            /* Modal improvements for mobile */
+            .modal {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-width: 400px;
+                margin: 20px auto;
+                padding: 20px;
+            }
+            
+            .modal h2 {
+                font-size: 1.3rem;
+            }
+            
+            .modal input {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+            
+            .modal .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+        
+        /* Additional mobile optimizations for very small screens */
+        @media (max-width: 480px) {
+            /* Ensure proper touch targets */
+            button, .btn, .action-btn, .filter-btn, .admin-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Improve text readability */
+            body {
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            
+            /* Better spacing for small screens */
+            .inventory-card {
+                margin-bottom: 10px;
+            }
+            
+            /* Ensure buttons don't overflow */
+            .action-row {
+                width: 100%;
+            }
+            
+            .action-btn {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .container {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .logo-section img {
+                height: 35px;
+            }
+            
+            .search-section,
+            .stats-section,
+            .inventory-section,
+            .admin-section,
+            .replace-section,
+            .email-section {
+                padding: 15px;
+                border-radius: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .filter-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .filter-btn {
+                max-width: none;
+                width: 100%;
+            }
+            
+            .stock-info {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .action-btn {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            
+            .modal-content {
+                width: 98%;
+                padding: 15px;
+                margin: 10px auto;
             }
         }
     </style>
@@ -743,16 +1099,16 @@
     <div id="saveStatus" class="save-status"></div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
-        <div style="background: white; padding: 30px; border-radius: 15px; max-width: 400px; width: 90%;">
-            <h3 style="margin-bottom: 20px; text-align: center;">Admin Login</h3>
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Admin Login</h3>
             <div class="form-group">
                 <label for="passwordInput">Password:</label>
-                <input type="password" id="passwordInput" placeholder="Enter admin password" style="width: 100%;">
+                <input type="password" id="passwordInput" placeholder="Enter admin password">
             </div>
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn" onclick="login()" style="flex: 1;">Login</button>
-                <button class="btn" onclick="hideLoginModal()" style="flex: 1; background: #6c757d;">Cancel</button>
+                <button class="btn" onclick="login()">Login</button>
+                <button class="btn" onclick="hideLoginModal()" style="background: #6c757d;">Cancel</button>
             </div>
         </div>
     </div>
