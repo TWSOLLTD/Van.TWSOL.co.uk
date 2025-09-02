@@ -129,6 +129,7 @@
             display: block;
         }
 
+        .admin-section.show ~ .search-section,
         .admin-section.show ~ .inventory-section,
         .admin-section.show ~ .replace-section,
         .admin-section.show ~ .email-section {
@@ -670,8 +671,8 @@
                     <input type="text" id="newItemName" placeholder="Enter item name">
                 </div>
                 <div class="form-group">
-                    <label for="newItemMinStock">Minimum Stock:</label>
-                    <input type="number" id="newItemMinStock" placeholder="Enter minimum stock level">
+                    <label for="newItemMinStock">Required Stock:</label>
+                    <input type="number" id="newItemMinStock" placeholder="Enter required stock level">
                 </div>
                 <div class="form-group">
                     <label for="newItemCurrentStock">Current Stock:</label>
@@ -687,8 +688,8 @@
                     <select id="updateItemName"></select>
                 </div>
                 <div class="form-group">
-                    <label for="updateItemMinStock">Minimum Stock:</label>
-                    <input type="number" id="updateItemMinStock" placeholder="Enter minimum stock level">
+                    <label for="updateItemMinStock">Required Stock:</label>
+                    <input type="number" id="updateItemMinStock" placeholder="Enter required stock level">
                 </div>
                 <div class="form-group">
                     <label for="updateItemCurrentStock">Current Stock:</label>
@@ -982,7 +983,7 @@
 
         function updateStats() {
             const totalItems = inventory.length;
-            const lowStockItems = inventory.filter(item => item.currentStock < item.minStock && item.currentStock > 0).length;
+            const lowStockItems = inventory.filter(item => item.currentStock > 0 && item.currentStock < (item.minStock * 0.33)).length;
             const outOfStockItems = inventory.filter(item => item.currentStock === 0).length;
             const totalStock = inventory.reduce((sum, item) => sum + item.currentStock, 0);
 
@@ -1020,7 +1021,7 @@
                 </div>
                 <div class="stock-info">
                     <div class="stock-item">
-                        <div class="stock-label">Minimum</div>
+                        <div class="stock-label">Required</div>
                         <div class="stock-value">${item.minStock}</div>
                     </div>
                     <div class="stock-item">
@@ -1055,7 +1056,7 @@
 
         function getStockStatus(item) {
             if (item.currentStock === 0) return 'out';
-            if (item.currentStock < item.minStock) return 'low';
+            if (item.currentStock < (item.minStock * 0.33)) return 'low';
             return 'in';
         }
 
@@ -1080,7 +1081,7 @@
         function filterInventoryByType(items) {
             switch (currentFilter) {
                 case 'low':
-                    return items.filter(item => item.currentStock < item.minStock && item.currentStock > 0);
+                    return items.filter(item => item.currentStock > 0 && item.currentStock < (item.minStock * 0.33));
                 case 'out':
                     return items.filter(item => item.currentStock === 0);
                 default:
