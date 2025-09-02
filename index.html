@@ -692,15 +692,14 @@
                     <i class="fas fa-trash"></i> Remove Item
                 </button>
 
-                <h3 style="margin-top: 30px;"><i class="fas fa-download"></i> Import/Reset Data</h3>
-                <button class="btn" onclick="importDefaultInventory()">
-                    <i class="fas fa-download"></i> Import Default Inventory
-                </button>
-                <button class="btn" onclick="forceReloadDefault()">
-                    <i class="fas fa-sync"></i> Force Reload Default
-                </button>
+                <h3 style="margin-top: 30px;"><i class="fas fa-trash"></i> Reset Data</h3>
                 <button class="btn btn-danger" onclick="clearAllData()">
                     <i class="fas fa-trash"></i> Clear All Data
+                </button>
+
+                <h3 style="margin-top: 30px;"><i class="fas fa-arrow-left"></i> Exit Admin</h3>
+                <button class="btn" onclick="exitAdmin()">
+                    <i class="fas fa-arrow-left"></i> Back to Main View
                 </button>
             </div>
         </div>
@@ -1302,6 +1301,11 @@
                 alert("Incorrect password.");
                 document.getElementById('passwordInput').value = '';
             }
+        }
+
+        function exitAdmin() {
+            document.getElementById('adminMenu').classList.remove('show');
+            document.getElementById('adminButton').style.display = 'flex';
         }
 
         // Save status function
