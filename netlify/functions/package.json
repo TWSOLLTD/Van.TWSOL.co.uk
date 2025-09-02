@@ -1,0 +1,9 @@
+{
+  "name": "van-inventory-function",
+  "version": "1.0.0",
+  "description": "Netlify function for van inventory management",
+  "main": "inventory.js",
+  "dependencies": {
+    "airtable": "^0.12.2"
+  }
+}
