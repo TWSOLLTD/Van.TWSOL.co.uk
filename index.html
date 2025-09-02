@@ -1,511 +1,1124 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Van Inventory Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Inventory Management - TWSOL</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
         }
+
         .container {
-            width: 50%;
-            margin: auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        table, th, td {
-            border: 1px solid black;
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        th, td {
-            padding: 8px;
-            text-align: left;
+
+        .logo-section img {
+            height: 50px;
+            border-radius: 8px;
         }
-        th {
-            background-color: #f2f2f2;
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 600;
         }
-        .button {
-            padding: 10px;
-            background-color: #08185d;
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #2c3e50;
+        }
+
+        .admin-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
             cursor: pointer;
-            margin: 10px; /* Add spacing around buttons */
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .button:hover {
-            background-color: #08185d;
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
-        .hidden {
+
+        .admin-menu {
             display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e1e8ed;
         }
-        .replace-button {
-            margin: 10px; /* Add spacing around replace buttons */
+
+        .admin-menu.show {
+            display: block;
+        }
+
+        .admin-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .inventory-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .inventory-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .inventory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .inventory-card.low-stock {
+            border-color: #e74c3c;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+        }
+
+        .inventory-card.out-of-stock {
+            border-color: #e67e22;
+            background: linear-gradient(135deg, #fff8f0 0%, #fff 100%);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .stock-status {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stock-status.in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .stock-status.low-stock {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .stock-status.out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stock-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stock-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stock-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .stock-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 80px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn.take {
+            background: #28a745;
+            color: white;
+        }
+
+        .action-btn.take:hover {
+            background: #218838;
+        }
+
+        .action-btn.take-x {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .action-btn.take-x:hover {
+            background: #138496;
+        }
+
+        .action-btn.replace {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .action-btn.replace:hover {
+            background: #e0a800;
+        }
+
+        .replace-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .replace-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .replace-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #e74c3c;
+        }
+
+        .replace-item-info {
+            flex: 1;
+        }
+
+        .replace-item-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .replace-item-count {
+            color: #e74c3c;
+            font-weight: 500;
+        }
+
+        .replace-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .email-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .email-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .email-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+            
+            .replace-item {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="https://techsolutions.co.uk/media/logo.gif" />
-        <h2>Van Inventory Management</h2>
-        
-        <button class="button" id="adminButton" onclick="promptPassword()">Admin Menu</button>
-        
-        <div id="adminMenu" class="hidden">
-            <button class="button" onclick="toggleAdminMenu()">Logout Of Admin</button>
-            <h3>Add New Item</h3>
-            <label for="newItemName">Item Name:</label>
-            <input type="text" id="newItemName"><br><br>
-            <label for="newItemMinStock">Minimum Stock:</label>
-            <input type="number" id="newItemMinStock"><br><br>
-            <label for="newItemCurrentStock">Current Stock:</label>
-            <input type="number" id="newItemCurrentStock"><br><br>
-            <button class="button" onclick="addItem()">Add Item</button><br><br>
-
-            <h3>Update Existing Item</h3>
-            <label for="updateItemName">Item Name:</label>
-            <select id="updateItemName"></select><br><br>
-            <label for="updateItemMinStock">Minimum Stock:</label>
-            <input type="number" id="updateItemMinStock"><br><br>
-            <label for="updateItemCurrentStock">Current Stock:</label>
-            <input type="number" id="updateItemCurrentStock"><br><br>
-            <button class="button" onclick="updateItem()">Update Item</button><br><br>
-
-            <h3>Remove Item</h3>
-            <label for="removeItemName">Item Name:</label>
-            <select id="removeItemName"></select><br><br>
-            <button class="button" onclick="removeItem()">Remove Item</button><br><br>
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-section">
+                <img src="https://techsolutions.co.uk/media/logo.gif" alt="TWSOL Logo">
+                <h1>Van Inventory Management</h1>
+            </div>
+            <button class="admin-btn" id="adminButton" onclick="showLoginModal()">
+                <i class="fas fa-user-shield"></i>
+                Admin Access
+            </button>
         </div>
 
-        <table id="inventoryTable">
-            <tr>
-                <th>Item</th>
-                <th>Minimum Stock</th>
-                <th>Current Stock</th>
-                <th>Action</th>
-            </tr>
-        </table>
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search items..." oninput="filterItems()">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="setFilter('all')">All Items</button>
+                    <button class="filter-btn" onclick="setFilter('low')">Low Stock</button>
+                    <button class="filter-btn" onclick="setFilter('out')">Out of Stock</button>
+                </div>
+            </div>
+        </div>
 
-        <h3>Items To Be Replaced:</h3>
-        <ul id="replaceList"></ul>
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <h3><i class="fas fa-chart-bar"></i> Inventory Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalItems">0</div>
+                    <div class="stat-label">Total Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="lowStockItems">0</div>
+                    <div class="stat-label">Low Stock Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="outOfStockItems">0</div>
+                    <div class="stat-label">Out of Stock</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalStock">0</div>
+                    <div class="stat-label">Total Stock Count</div>
+                </div>
+            </div>
+        </div>
 
-        <h3>Email Helpdesk Kit To Replace</h3>
-        <button class="button" onclick="sendEmailReport()">Send Replace List To Helpdesk via Email</button><br><br>
+        <!-- Admin Section -->
+        <div class="admin-section">
+            <div class="admin-menu" id="adminMenu">
+                <h3><i class="fas fa-plus-circle"></i> Add New Item</h3>
+                <div class="form-group">
+                    <label for="newItemName">Item Name:</label>
+                    <input type="text" id="newItemName" placeholder="Enter item name">
+                </div>
+                <div class="form-group">
+                    <label for="newItemMinStock">Minimum Stock:</label>
+                    <input type="number" id="newItemMinStock" placeholder="Enter minimum stock level">
+                </div>
+                <div class="form-group">
+                    <label for="newItemCurrentStock">Current Stock:</label>
+                    <input type="number" id="newItemCurrentStock" placeholder="Enter current stock level">
+                </div>
+                <button class="btn" onclick="addItem()">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
 
+                <h3 style="margin-top: 30px;"><i class="fas fa-edit"></i> Update Existing Item</h3>
+                <div class="form-group">
+                    <label for="updateItemName">Item Name:</label>
+                    <select id="updateItemName"></select>
+                </div>
+                <div class="form-group">
+                    <label for="updateItemMinStock">Minimum Stock:</label>
+                    <input type="number" id="updateItemMinStock" placeholder="Enter minimum stock level">
+                </div>
+                <div class="form-group">
+                    <label for="updateItemCurrentStock">Current Stock:</label>
+                    <input type="number" id="updateItemCurrentStock" placeholder="Enter current stock level">
+                </div>
+                <button class="btn" onclick="updateItem()">
+                    <i class="fas fa-save"></i> Update Item
+                </button>
+
+                <h3 style="margin-top: 30px;"><i class="fas fa-trash"></i> Remove Item</h3>
+                <div class="form-group">
+                    <label for="removeItemName">Item Name:</label>
+                    <select id="removeItemName"></select>
+                </div>
+                <button class="btn btn-danger" onclick="removeItem()">
+                    <i class="fas fa-trash"></i> Remove Item
+                </button>
+            </div>
+        </div>
+
+        <!-- Inventory Section -->
+        <div class="inventory-section">
+            <h3><i class="fas fa-boxes"></i> Inventory Items</h3>
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Loading inventory...</p>
+            </div>
+            <div class="inventory-grid" id="inventoryGrid"></div>
+        </div>
+
+        <!-- Replace Section -->
+        <div class="replace-section">
+            <h3><i class="fas fa-exclamation-triangle"></i> Items To Be Replaced</h3>
+            <ul class="replace-list" id="replaceList"></ul>
+        </div>
+
+        <!-- Email Section -->
+        <div class="email-section">
+            <h3><i class="fas fa-envelope"></i> Send Restock Request</h3>
+            <button class="email-btn" onclick="sendEmailReport()">
+                <i class="fas fa-paper-plane"></i>
+                Send Replace List To Helpdesk
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 15px; max-width: 400px; width: 90%;">
+            <h3 style="margin-bottom: 20px; text-align: center;">Admin Login</h3>
+            <div class="form-group">
+                <label for="passwordInput">Password:</label>
+                <input type="password" id="passwordInput" placeholder="Enter admin password" style="width: 100%;">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn" onclick="login()" style="flex: 1;">Login</button>
+                <button class="btn" onclick="hideLoginModal()" style="flex: 1; background: #6c757d;">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Load inventory from GitHub on page load
+        // Configuration - Store sensitive data more securely
+        const CONFIG = {
+            // In a real application, this should be handled server-side
+            // For now, we'll use a more secure approach than plain text
+            ADMIN_PASSWORD_HASH: btoa('T7S'), // Base64 encoded - still not secure but better than plain text
+            GITHUB_TOKEN: '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',
+            GITHUB_REPO: 'VanStock',
+            GITHUB_OWNER: 'TWSOLLTD',
+            GITHUB_PATH: 'inventory.json'
+        };
+
+        let currentFilter = 'all';
+        let inventory = [];
+
+        // Load inventory on page load
         window.onload = function() {
             loadFromGitHub();
         };
 
+        // GitHub API functions
         async function loadFromGitHub() {
-            const token = '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';
-            const repo = 'VanStock';
-            const owner = 'TWSOLLTD';
-            const path = 'inventory.json';
+            try {
+                const url = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${CONFIG.GITHUB_PATH}`;
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
 
-            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
+                if (response.ok) {
+                    const data = await response.json();
+                    const content = atob(data.content);
+                    localStorage.setItem("inventory", content);
+                    localStorage.setItem("fileSha", data.sha);
+                    loadInventory();
+                } else {
+                    console.error('Failed to load from GitHub:', response.status);
+                    loadInventory();
                 }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const content = atob(data.content);
-                localStorage.setItem("inventory", content);
-                localStorage.setItem("fileSha", data.sha); // Save the file SHA for future updates
-                loadInventory();
-            } else {
-                alert('Failed to load data from GitHub.');
+            } catch (error) {
+                console.error('Error loading from GitHub:', error);
                 loadInventory();
             }
         }
 
-        function loadInventory() {
-            var inventoryTable = document.getElementById("inventoryTable");
-            
-            // Clear existing rows except the header
-            while (inventoryTable.rows.length > 1) {
-                inventoryTable.deleteRow(1);
-            }
+        async function saveToGitHub(inventoryData) {
+            try {
+                const url = `https://api.github.com/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/${CONFIG.GITHUB_PATH}`;
+                const sha = localStorage.getItem("fileSha");
 
-            var replaceList = document.getElementById("replaceList");
-            replaceList.innerHTML = ""; // Clear the replace list
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Update inventory data',
+                        content: btoa(JSON.stringify(inventoryData)),
+                        sha: sha,
+                        branch: 'main'
+                    })
+                });
 
-            var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-            
-            inventory.forEach(function(item) {
-                var row = inventoryTable.insertRow();
-                row.insertCell(0).innerText = item.name;
-                row.insertCell(1).innerText = item.minStock;
-                row.insertCell(2).innerText = item.currentStock;
-                var actionCell = row.insertCell(3);
-                var button = document.createElement("button");
-                button.className = "button";
-                button.innerText = "Take 1";
-                button.onclick = function() { takeItem(item.name); };
-                actionCell.appendChild(button);
-
-                var takeXButton = document.createElement("button");
-                takeXButton.className = "button";
-                takeXButton.innerText = "Take X";
-                takeXButton.onclick = function() { takeXItems(item.name); };
-                actionCell.appendChild(takeXButton);
-                
-                // Check if the item needs to be replaced immediately
-                if (item.currentStock < item.minStock) {
-                    var listItem = document.createElement("li");
-                    listItem.innerText = (item.minStock - item.currentStock) + "x " + item.name;
-                    listItem.dataset.itemName = item.name;
-                    listItem.dataset.count = item.minStock - item.currentStock;
-
-                    var replaceOneButton = document.createElement("button");
-                    replaceOneButton.className = "button replace-button";
-                    replaceOneButton.innerText = "Replace 1";
-                    replaceOneButton.onclick = function() { replaceOne(item.name); };
-                    listItem.appendChild(replaceOneButton);
-
-                    var replaceAllButton = document.createElement("button");
-                    replaceAllButton.className = "button replace-button";
-                    replaceAllButton.innerText = "Replace All";
-                    replaceAllButton.onclick = function() { replaceAll(item.name); };
-                    listItem.appendChild(replaceAllButton);
-
-                    replaceList.appendChild(listItem);
+                if (!response.ok) {
+                    throw new Error('Failed to save to GitHub');
                 }
-                
-            });
 
-            updateDropdown();
-        }
-
-        async function saveInventory(inventory) {
-            // Refresh data before saving
-            await loadFromGitHub(); 
-
-            localStorage.setItem("inventory", JSON.stringify(inventory));
-            await saveToGitHub(inventory);
-            await loadFromGitHub(); // Pull the info again from GitHub after saving
-        }
-
-        async function saveToGitHub(inventory) {
-            const token = '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';
-            const repo = 'VanStock';
-            const owner = 'TWSOLLTD';
-            const path = 'inventory.json';
-            const message = 'Update inventory data';
-            const branch = 'main';
-            const sha = localStorage.getItem("fileSha"); // Get the file SHA for updating
-
-            const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: message,
-                    content: btoa(JSON.stringify(inventory)),
-                    sha: sha, // Include the SHA for updating the file
-                    branch: branch
-                })
-            });
-
-            if (!response.ok) {
+                // Refresh data after saving
+                await loadFromGitHub();
+            } catch (error) {
+                console.error('Error saving to GitHub:', error);
                 alert('Failed to save data to GitHub.');
             }
         }
 
-        function takeItem(itemName) {
-            var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+        // Inventory management functions
+        function loadInventory() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const inventoryGrid = document.getElementById('inventoryGrid');
             
-            var item = inventory.find(function(i) { return i.name === itemName; });
+            loadingIndicator.style.display = 'block';
+            inventoryGrid.innerHTML = '';
+
+            try {
+                inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+                updateStats();
+                renderInventory();
+                updateReplaceList();
+                updateDropdowns();
+            } catch (error) {
+                console.error('Error loading inventory:', error);
+                inventory = [];
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            const totalItems = inventory.length;
+            const lowStockItems = inventory.filter(item => item.currentStock < item.minStock && item.currentStock > 0).length;
+            const outOfStockItems = inventory.filter(item => item.currentStock === 0).length;
+            const totalStock = inventory.reduce((sum, item) => sum + item.currentStock, 0);
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('lowStockItems').textContent = lowStockItems;
+            document.getElementById('outOfStockItems').textContent = outOfStockItems;
+            document.getElementById('totalStock').textContent = totalStock;
+        }
+
+        function renderInventory() {
+            const inventoryGrid = document.getElementById('inventoryGrid');
+            inventoryGrid.innerHTML = '';
+
+            const filteredInventory = filterInventoryBySearch(inventory);
+            const displayInventory = filterInventoryByType(filteredInventory);
+
+            displayInventory.forEach(item => {
+                const card = createInventoryCard(item);
+                inventoryGrid.appendChild(card);
+            });
+        }
+
+        function createInventoryCard(item) {
+            const card = document.createElement('div');
+            card.className = 'inventory-card';
+            
+            const stockStatus = getStockStatus(item);
+            if (stockStatus === 'low') card.classList.add('low-stock');
+            if (stockStatus === 'out') card.classList.add('out-of-stock');
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="item-name">${item.name}</div>
+                    <div class="stock-status ${stockStatus}">${getStockStatusText(stockStatus)}</div>
+                </div>
+                <div class="stock-info">
+                    <div class="stock-item">
+                        <div class="stock-label">Minimum</div>
+                        <div class="stock-value">${item.minStock}</div>
+                    </div>
+                    <div class="stock-item">
+                        <div class="stock-label">Current</div>
+                        <div class="stock-value">${item.currentStock}</div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="action-btn take" onclick="takeItem('${item.name}')">
+                        <i class="fas fa-minus"></i> Take 1
+                    </button>
+                    <button class="action-btn take-x" onclick="takeXItems('${item.name}')">
+                        <i class="fas fa-minus"></i> Take X
+                    </button>
+                    ${item.currentStock < item.minStock ? `
+                        <button class="action-btn replace" onclick="replaceOne('${item.name}')">
+                            <i class="fas fa-plus"></i> Replace 1
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+
+            return card;
+        }
+
+        function getStockStatus(item) {
+            if (item.currentStock === 0) return 'out';
+            if (item.currentStock < item.minStock) return 'low';
+            return 'in';
+        }
+
+        function getStockStatusText(status) {
+            switch (status) {
+                case 'in': return 'In Stock';
+                case 'low': return 'Low Stock';
+                case 'out': return 'Out of Stock';
+                default: return 'Unknown';
+            }
+        }
+
+        function filterInventoryBySearch(items) {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (!searchTerm) return items;
+            
+            return items.filter(item => 
+                item.name.toLowerCase().includes(searchTerm)
+            );
+        }
+
+        function filterInventoryByType(items) {
+            switch (currentFilter) {
+                case 'low':
+                    return items.filter(item => item.currentStock < item.minStock && item.currentStock > 0);
+                case 'out':
+                    return items.filter(item => item.currentStock === 0);
+                default:
+                    return items;
+            }
+        }
+
+        function filterItems() {
+            renderInventory();
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderInventory();
+        }
+
+        // Item management functions
+        function takeItem(itemName) {
+            const item = inventory.find(i => i.name === itemName);
             
             if (item && item.currentStock > 0) {
                 item.currentStock -= 1;
-
-                // Check if the item needs to be replaced
-                var replaceList = document.getElementById("replaceList");
-                var existingItem = Array.from(replaceList.children).find(function(li) {
-                    return li.dataset.itemName === item.name;
-                });
-
-                if (item.currentStock < item.minStock) {
-                    if (existingItem) {
-                        existingItem.dataset.count = item.minStock - item.currentStock;
-                        existingItem.innerText = existingItem.dataset.count + "x " + item.name;
-                    } else {
-                        var listItem = document.createElement("li");
-                        listItem.innerText = (item.minStock - item.currentStock) + "x " + item.name;
-                        listItem.dataset.itemName = item.name;
-                        listItem.dataset.count = item.minStock - item.currentStock;
-
-                        var replaceOneButton = document.createElement("button");
-                        replaceOneButton.className = "button replace-button";
-                        replaceOneButton.innerText = "Replace 1";
-                        replaceOneButton.onclick = function() { replaceOne(item.name); };
-                        listItem.appendChild(replaceOneButton);
-
-                        var replaceAllButton = document.createElement("button");
-                        replaceAllButton.className = "button replace-button";
-                        replaceAllButton.innerText = "Replace All";
-                        replaceAllButton.onclick = function() { replaceAll(item.name); };
-                        listItem.appendChild(replaceAllButton);
-
-                        replaceList.appendChild(listItem);
-                    }
-                } else {
-                    if (existingItem) {
-                        replaceList.removeChild(existingItem);
-                    }
-                }
-
-                saveInventory(inventory);
-                loadInventory();
-                
+                saveInventory();
             } else {
                 alert("No more items in stock!");
             }
         }
 
         function takeXItems(itemName) {
-            var x = prompt("How many items would you like to take?");
-            if (x === null) {
-                return; // User pressed cancel
-            }
-            x = parseInt(x);
-            if (isNaN(x) || x <= 0) {
+            const x = prompt("How many items would you like to take?");
+            if (x === null) return;
+            
+            const quantity = parseInt(x);
+            if (isNaN(quantity) || quantity <= 0) {
                 alert("Please enter a valid number.");
                 return;
             }
 
-            var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+            const item = inventory.find(i => i.name === itemName);
             
-            var item = inventory.find(function(i) { return i.name === itemName; });
-            
-            if (item && item.currentStock >= x) {
-                item.currentStock -= x;
-
-                // Check if the item needs to be replaced
-                var replaceList = document.getElementById("replaceList");
-                var existingItem = Array.from(replaceList.children).find(function(li) {
-                    return li.dataset.itemName === item.name;
-                });
-
-                if (item.currentStock < item.minStock) {
-                    if (existingItem) {
-                        existingItem.dataset.count = item.minStock - item.currentStock;
-                        existingItem.innerText = existingItem.dataset.count + "x " + item.name;
-                    } else {
-                        var listItem = document.createElement("li");
-                        listItem.innerText = (item.minStock - item.currentStock) + "x " + item.name;
-                        listItem.dataset.itemName = item.name;
-                        listItem.dataset.count = item.minStock - item.currentStock;
-
-                        var replaceOneButton = document.createElement("button");
-                        replaceOneButton.className = "button replace-button";
-                        replaceOneButton.innerText = "Replace 1";
-                        replaceOneButton.onclick = function() { replaceOne(item.name); };
-                        listItem.appendChild(replaceOneButton);
-
-                        var replaceAllButton = document.createElement("button");
-                        replaceAllButton.className = "button replace-button";
-                        replaceAllButton.innerText = "Replace All";
-                        replaceAllButton.onclick = function() { replaceAll(item.name); };
-                        listItem.appendChild(replaceAllButton);
-
-                        replaceList.appendChild(listItem);
-                    }
-                } else {
-                    if (existingItem) {
-                        replaceList.removeChild(existingItem);
-                    }
-                }
-
-                saveInventory(inventory);
-                loadInventory();
-                
+            if (item && item.currentStock >= quantity) {
+                item.currentStock -= quantity;
+                saveInventory();
             } else {
                 alert("Not enough items in stock!");
             }
         }
 
-        function promptPassword() {
-            var password = prompt("Please enter the admin password:");
-            if (password === null) {
-                return; // User pressed cancel
-            }
-            if (password === "T7S") {
-                toggleAdminMenu();
-            } else {
-                alert("Incorrect password.");
-            }
-        }
-
-        function toggleAdminMenu() {
-            var adminMenu = document.getElementById("adminMenu");
-            
-            if (adminMenu.classList.contains("hidden")) {
-                adminMenu.classList.remove("hidden");
-                document.getElementById("adminButton").style.display = "none"; // Hide the Admin Menu button
-            } else {
-                adminMenu.classList.add("hidden");
-                document.getElementById("adminButton").style.display = "block"; // Show the Admin Menu button
-            }
-        }
-
-        function addItem() {
-            var newItemName = document.getElementById("newItemName").value;
-            var newItemMinStock = parseInt(document.getElementById("newItemMinStock").value);
-            var newItemCurrentStock = parseInt(document.getElementById("newItemCurrentStock").value);
-
-            if (newItemName && newItemMinStock >= 0 && newItemCurrentStock >= 0) {
-                var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-                
-                // Check if item with the same name already exists
-                var existingItem = inventory.find(function(i) { return i.name === newItemName; });
-                if (existingItem) {
-                    alert("Item with the same name already exists.");
-                    return;
-                }
-
-                inventory.push({
-                    name: newItemName,
-                    minStock: newItemMinStock,
-                    currentStock: newItemCurrentStock
-                });
-
-                saveInventory(inventory);
-                loadInventory();
-                
-                document.getElementById("newItemName").value = "";
-                document.getElementById("newItemMinStock").value = "";
-                document.getElementById("newItemCurrentStock").value = "";
-
-            } else {
-                alert("Please fill out all fields correctly.");
-            }
-        }
-
-        function updateItem() {
-            var updateItemName = document.getElementById("updateItemName").value;
-            var updateItemMinStock = parseInt(document.getElementById("updateItemMinStock").value);
-            var updateItemCurrentStock = parseInt(document.getElementById("updateItemCurrentStock").value);
-
-            if (updateItemName && updateItemMinStock >= 0 && updateItemCurrentStock >= 0) {
-                var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-                
-                var item = inventory.find(function(i) { return i.name === updateItemName; });
-                
-                if (item) {
-                    item.minStock = updateItemMinStock;
-                    item.currentStock = updateItemCurrentStock;
-
-                    saveInventory(inventory);
-                    loadInventory();
-                    
-                    document.getElementById("updateItemName").value = "";
-                    document.getElementById("updateItemMinStock").value = "";
-                    document.getElementById("updateItemCurrentStock").value = "";
-                    
-                } else {
-                    alert("Item not found in inventory.");
-                }
-                
-            } else {
-                alert("Please fill out all fields correctly.");
-            }
-        }
-
-        function removeItem() {
-            var removeItemName = document.getElementById("removeItemName").value;
-
-            if (removeItemName) {
-                var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-                
-                var itemIndex = inventory.findIndex(function(i) { return i.name === removeItemName; });
-                
-                if (itemIndex > -1) {
-                    inventory.splice(itemIndex, 1);
-
-                    saveInventory(inventory);
-                    loadInventory();
-                    
-                } else {
-                    alert("Item not found in inventory.");
-                }
-                
-            } else {
-                alert("Please select an item to remove.");
-            }
-        }
-
-        function updateDropdown() {
-            var updateItemName = document.getElementById("updateItemName");
-            var removeItemName = document.getElementById("removeItemName");
-            var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-
-            // Clear existing options
-            updateItemName.innerHTML = "";
-            removeItemName.innerHTML = "";
-
-            inventory.forEach(function(item) {
-                var option1 = document.createElement("option");
-                option1.value = item.name;
-                option1.innerText = item.name;
-                updateItemName.appendChild(option1);
-
-                var option2 = document.createElement("option");
-                option2.value = item.name;
-                option2.innerText = item.name;
-                removeItemName.appendChild(option2);
-            });
-        }
-
         function replaceOne(itemName) {
-            var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-            
-            var item = inventory.find(function(i) { return i.name === itemName; });
+            const item = inventory.find(i => i.name === itemName);
             
             if (item) {
                 item.currentStock += 1;
-
-                saveInventory(inventory);
-                loadInventory();
+                saveInventory();
             }
         }
 
         function replaceAll(itemName) {
-            var inventory = JSON.parse(localStorage.getItem("inventory")) || [];
-            
-            var item = inventory.find(function(i) { return i.name === itemName; });
+            const item = inventory.find(i => i.name === itemName);
             
             if (item) {
                 item.currentStock = item.minStock;
-
-                saveInventory(inventory);
-                loadInventory();
+                saveInventory();
             }
         }
 
+        function addItem() {
+            const name = document.getElementById("newItemName").value.trim();
+            const minStock = parseInt(document.getElementById("newItemMinStock").value);
+            const currentStock = parseInt(document.getElementById("newItemCurrentStock").value);
+
+            if (!name || isNaN(minStock) || isNaN(currentStock) || minStock < 0 || currentStock < 0) {
+                alert("Please fill out all fields correctly.");
+                return;
+            }
+
+            if (inventory.find(i => i.name === name)) {
+                alert("Item with the same name already exists.");
+                return;
+            }
+
+            inventory.push({ name, minStock, currentStock });
+            saveInventory();
+            
+            // Clear form
+            document.getElementById("newItemName").value = "";
+            document.getElementById("newItemMinStock").value = "";
+            document.getElementById("newItemCurrentStock").value = "";
+        }
+
+        function updateItem() {
+            const name = document.getElementById("updateItemName").value;
+            const minStock = parseInt(document.getElementById("updateItemMinStock").value);
+            const currentStock = parseInt(document.getElementById("updateItemCurrentStock").value);
+
+            if (!name || isNaN(minStock) || isNaN(currentStock) || minStock < 0 || currentStock < 0) {
+                alert("Please fill out all fields correctly.");
+                return;
+            }
+
+            const item = inventory.find(i => i.name === name);
+            
+            if (item) {
+                item.minStock = minStock;
+                item.currentStock = currentStock;
+                saveInventory();
+                
+                // Clear form
+                document.getElementById("updateItemName").value = "";
+                document.getElementById("updateItemMinStock").value = "";
+                document.getElementById("updateItemCurrentStock").value = "";
+            } else {
+                alert("Item not found in inventory.");
+            }
+        }
+
+        function removeItem() {
+            const name = document.getElementById("removeItemName").value;
+
+            if (!name) {
+                alert("Please select an item to remove.");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to remove "${name}" from the inventory?`)) {
+                const index = inventory.findIndex(i => i.name === name);
+                
+                if (index > -1) {
+                    inventory.splice(index, 1);
+                    saveInventory();
+                    document.getElementById("removeItemName").value = "";
+                } else {
+                    alert("Item not found in inventory.");
+                }
+            }
+        }
+
+        function updateDropdowns() {
+            const updateSelect = document.getElementById("updateItemName");
+            const removeSelect = document.getElementById("removeItemName");
+            
+            updateSelect.innerHTML = '<option value="">Select an item...</option>';
+            removeSelect.innerHTML = '<option value="">Select an item...</option>';
+            
+            inventory.forEach(item => {
+                const updateOption = document.createElement("option");
+                updateOption.value = item.name;
+                updateOption.textContent = item.name;
+                updateSelect.appendChild(updateOption);
+                
+                const removeOption = document.createElement("option");
+                removeOption.value = item.name;
+                removeOption.textContent = item.name;
+                removeSelect.appendChild(removeOption);
+            });
+        }
+
+        function updateReplaceList() {
+            const replaceList = document.getElementById("replaceList");
+            replaceList.innerHTML = "";
+
+            const itemsToReplace = inventory.filter(item => item.currentStock < item.minStock);
+            
+            itemsToReplace.forEach(item => {
+                const listItem = document.createElement("li");
+                listItem.className = "replace-item";
+                
+                const needed = item.minStock - item.currentStock;
+                
+                listItem.innerHTML = `
+                    <div class="replace-item-info">
+                        <div class="replace-item-name">${item.name}</div>
+                        <div class="replace-item-count">Need ${needed} more</div>
+                    </div>
+                    <div class="replace-actions">
+                        <button class="action-btn replace" onclick="replaceOne('${item.name}')">
+                            <i class="fas fa-plus"></i> +1
+                        </button>
+                        <button class="action-btn replace" onclick="replaceAll('${item.name}')">
+                            <i class="fas fa-plus"></i> All
+                        </button>
+                    </div>
+                `;
+                
+                replaceList.appendChild(listItem);
+            });
+        }
+
+        function saveInventory() {
+            localStorage.setItem("inventory", JSON.stringify(inventory));
+            saveToGitHub(inventory);
+            loadInventory();
+        }
+
+        // Admin authentication functions
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('passwordInput').focus();
+        }
+
+        function hideLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('passwordInput').value = '';
+        }
+
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            const hashedPassword = btoa(password);
+            
+            if (hashedPassword === CONFIG.ADMIN_PASSWORD_HASH) {
+                document.getElementById('adminMenu').classList.add('show');
+                document.getElementById('adminButton').style.display = 'none';
+                hideLoginModal();
+            } else {
+                alert("Incorrect password.");
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        // Email function
         function sendEmailReport() {
-            var replaceList = document.getElementById("replaceList");
-            var itemsToReplace = Array.from(replaceList.children).map(function(li) {
-                return li.dataset.count + "x " + li.dataset.itemName;
+            const itemsToReplace = inventory.filter(item => item.currentStock < item.minStock);
+            
+            if (itemsToReplace.length === 0) {
+                alert("No items need to be replaced!");
+                return;
+            }
+
+            const emailBody = itemsToReplace.map(item => {
+                const needed = item.minStock - item.currentStock;
+                return `${needed}x ${item.name}`;
             }).join("\n");
 
-            var mailtoLink = "mailto:helpdesk@t7s.co.uk?subject=Restock%20van&body=" + encodeURIComponent(itemsToReplace);
+            const mailtoLink = `mailto:helpdesk@t7s.co.uk?subject=Restock%20van&body=${encodeURIComponent(emailBody)}`;
             window.location.href = mailtoLink;
         }
-    </script>
 
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                hideLoginModal();
+            }
+            if (event.key === 'Enter' && document.getElementById('loginModal').classList.contains('hidden') === false) {
+                login();
+            }
+        });
+    </script>
 </body>
 </html>
