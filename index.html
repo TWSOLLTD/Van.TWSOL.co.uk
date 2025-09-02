@@ -122,6 +122,17 @@
             padding: 25px;
             margin-bottom: 30px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .admin-section.show {
+            display: block;
+        }
+
+        .admin-section.show ~ .inventory-section,
+        .admin-section.show ~ .replace-section,
+        .admin-section.show ~ .email-section {
+            display: none;
         }
 
         .admin-btn {
@@ -653,7 +664,7 @@
         </div>
 
         <!-- Admin Section -->
-        <div class="admin-section">
+        <div class="admin-section" id="adminSection">
             <div class="admin-menu" id="adminMenu">
                 <h3><i class="fas fa-plus-circle"></i> Add New Item</h3>
                 <div class="form-group">
@@ -1298,7 +1309,7 @@
             const hashedPassword = btoa(password);
             
             if (hashedPassword === CONFIG.ADMIN_PASSWORD_HASH) {
-                document.getElementById('adminMenu').classList.add('show');
+                document.getElementById('adminSection').classList.add('show');
                 document.getElementById('adminButton').style.display = 'none';
                 hideLoginModal();
             } else {
@@ -1308,7 +1319,7 @@
         }
 
         function exitAdmin() {
-            document.getElementById('adminMenu').classList.remove('show');
+            document.getElementById('adminSection').classList.remove('show');
             document.getElementById('adminButton').style.display = 'flex';
         }
 
